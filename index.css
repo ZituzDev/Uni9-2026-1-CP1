@@ -1,0 +1,42 @@
+/* Use classe em vez de 'body' para configurações globais, 
+   ou mantenha o body apenas para fontes, como é padrão */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    text-align: center;
+}
+
+/* Seletor por classe (.menu-superior) em vez da tag (nav) */
+.menu-superior {
+    background-color: #f8b400;
+    padding: 1rem;
+}
+
+/* Seletor específico para a foto */
+.foto-principal {
+    max-width: 100%;
+    margin: 20px auto;
+    border-radius: 8px;
+}
+
+/* Seletor da seção */
+.secao-servicos {
+    padding: 20px;
+    background-color: #fffaf0;
+}
+
+/* Seletor do card de serviço */
+.servico-card {
+    border: 1px solid #ddd;
+    margin: 10px auto;
+    padding: 15px;
+    max-width: 400px;
+    background-color: white;
+}
+
+/* Seletor do rodapé */
+.rodape-contato {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+}
