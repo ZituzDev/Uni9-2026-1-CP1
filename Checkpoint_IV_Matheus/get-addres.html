@@ -1,0 +1,91 @@
+<!DOCTYPE>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de CEP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow border border-gray-200 w-full max-w-md">
+        <h1 class="text-lg font-bold text-gray-800 mb-4">Consultar CEP</h1>
+        
+        <div class="flex gap-2 mb-4">
+            <input 
+                type="text" 
+                id="cep" 
+                placeholder="Ex: 01001-000" 
+                maxlength="9"
+                class="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-blue-500 text-gray-700"
+            >
+            <button 
+                id="btn-pesquisar" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded transition-colors"
+            >
+                Pesquisar
+            </button>
+        </div>
+
+        <div id="status" class="hidden text-sm mb-4"></div>
+
+        <div id="resultado" class="hidden border-t pt-4 space-y-2 text-sm text-gray-700">
+            <p><strong>Logradouro:</strong> <span id="res-logradouro"></span></p>
+            <p><strong>Bairro:</strong> <span id="res-bairro"></span></p>
+            <p><strong>Cidade/UF:</strong> <span id="res-localidade"></span> - <span id="res-uf"></span></p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            $('#cep').on('input', function() {
+                let inputValue = $(this).val().replace(/\D/g, '');
+                if (inputValue.length > 5) {
+                    inputValue = inputValue.substring(0, 5) + '-' + inputValue.substring(5, 8);
+                }
+                $(this).val(inputValue);
+            });
+
+            function searchZipCode() {
+                const zipCode = $('#cep').val().replace(/\D/g, '');
+                const $status = $('#status');
+                const $result = $('#resultado');
+
+                $status.addClass('hidden').removeClass('text-red-500 text-gray-500');
+                $result.addClass('hidden');
+
+                if (zipCode.length !== 8) {
+                    $status.text('Por favor, digite um CEP válido com 8 números.').addClass('text-red-500').removeClass('hidden');
+                    return;
+                }
+
+                $status.text('Buscando...').addClass('text-gray-500').removeClass('hidden');
+
+                $.getJSON(`https://viacep.com.br/ws/${zipCode}/json/`, function(responseData) {
+                    $status.addClass('hidden');
+
+                    if (responseData.erro) {
+                        $status.text('CEP não encontrado.').addClass('text-red-500').removeClass('hidden');
+                    } else {
+                        $('#res-logradouro').text(responseData.logradouro || 'Não informado');
+                        $('#res-bairro').text(responseData.bairro || 'Não informado');
+                        $('#res-localidade').text(responseData.localidade);
+                        $('#res-uf').text(responseData.uf);
+
+                        $result.removeClass('hidden');
+                    }
+                }).fail(function() {
+                    $status.text('Erro ao conectar com o serviço de busca.').addClass('text-red-500').removeClass('hidden');
+                });
+            }
+
+            $('#btn-pesquisar').on('click', searchZipCode);
+            $('#cep').on('keypress', function(event) {
+                if (event.which === 13) searchZipCode();
+            });
+        });
+    </script>
+</body>
+</html>
